@@ -4,6 +4,7 @@ import random
 import pandas as pd
 import numpy as np
 import array
+import csv
 
 
 def abrir_fichero(fichero): # Devuelve un conjunto de frozensets 
@@ -61,11 +62,13 @@ def evaluacion(individuo):
             first_support += 1
         elif set_individuo.issubset(frozen_dataset[i]) and i > 660:
             second_support += 1
-    if second_support == 0:
+    if first_support != 0 and second_support == 0:
         growth_rate = float("inf")
+    elif first_support == 0 and second_support == 0:
+        growth_rate = 0
     else:
         growth_rate = first_support/second_support
-    return growth_rate,
+    return growth_rate, first_support
 
 
 def mutacion(individuo): 
@@ -164,6 +167,7 @@ if __name__ == '__main__':
     if len(sys.argv) < 2:
         print("Please, insert dataset")
     else:
+        print("Ejecutando...")
         generaciones = 500
         poblacion_inicial = 100
         IND_SIZE = 10 # max longitud del patron
@@ -174,7 +178,7 @@ if __name__ == '__main__':
         frozen_dataset = transformar_dataset_set(tracts, dic) # Global para funciones
         
 
-        creator.create("FitnessMax", base.Fitness, weights = (1.0,))
+        creator.create("FitnessMax", base.Fitness, weights = (1.0, 1.0))
         creator.create("Individual", array.array, typecode = "i", fitness=creator.FitnessMax)
 
         toolbox = base.Toolbox()
@@ -193,3 +197,11 @@ if __name__ == '__main__':
         pop = toolbox.poblacion(n = poblacion_inicial)
         evo = evolutivo(generaciones, pop)
         final = salida(evo, dic)
+        with open("results.txt", 'w') as f:
+            for p in final:
+                f.write(str(p[0]))
+                f.write(",")
+                f.write(str(p[1]))
+                f.write("\n")
+            f.close()
+        print("Done!")
