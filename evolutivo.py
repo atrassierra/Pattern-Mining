@@ -167,6 +167,7 @@ if __name__ == '__main__':
     if len(sys.argv) < 2:
         print("Please, insert dataset")
     else:
+        random.seed(1234)
         print("Ejecutando...")
         generaciones = 500
         poblacion_inicial = 100
