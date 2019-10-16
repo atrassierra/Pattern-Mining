@@ -1,5 +1,5 @@
 # Evolutive Emerging Pattern algorithm
-## Evolutive emerging pattenr algorithm for transactional databases.
+## Evolutive emerging pattern algorithm for transactional databases.
 
 **evolutivo_terminal.py HELP**: python evolutivo_terminal.py --help
 
