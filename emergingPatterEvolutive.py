@@ -1,5 +1,6 @@
 import random
 import argparse
+import statistics as st
 
 def division(a, b):
     try:
@@ -53,8 +54,8 @@ class Data:
 class Population(Data):
 
     """
-    Popilation class
-    Data class is inherited to have Data.items atribute
+    Population class
+    Data class is inherited to have Data.items attribute
 
     This class contains Indivuduals instances and methods where Individual interacts between them (crossover, tournament, etc...)
     """
@@ -72,30 +73,58 @@ class Population(Data):
                     )
                 )
 
-    def crossover(self, ind1, ind2):
-        pass
+    def crossover(self):
+        auxPopulation = []
+
+        for ind1, ind2 in zip(self.population[::2], self.population[1::2]):
+            if self.args.crossover_rate >= random.random():
+                crossoverPoint = random.randint(0, len(ind1) - 1) if len(ind1) <= len(ind2) else random.randint(0, len(ind2) - 1)
+
+                auxPopulation.append(Individual(self.items, self.args, pattern = set(list(ind1.individual)[:crossoverPoint] + list(ind2.individual)[crossoverPoint:])))
+                auxPopulation.append(Individual(self.items, self.args, pattern = set(list(ind2.individual)[:crossoverPoint] + list(ind1.individual)[crossoverPoint:])))
+
+        self.population = auxPopulation
+
 
     def tournament(self):
-        pass
+        auxPopulation = [] # Para copiar sin apuntar al mismo sitio en memoria
+        for _ in range(0, self.args.population_size):
+            best = random.choice(self.population)
+            for _ in range(self.args.tournament_size) - 1:
+                ind = random.choice(self.population)
+                if ind > best:
+                    best = ind
+
+            auxPopulation.append(best)
+        self.population = auxPopulation
 
     def runGeneration(self):
-        pass
+        for i in range(self.args.generation_number):
+            print("Estamos en la generacion {}").format(i)
+            self.tournament()
+            self.crossover()
+            for individual in self.population:
+                individual.mutation()
 
 
 class Individual:
 
-    def __init__(self, items, args):
+    def __init__(self, items, args, pattern = None):
         self.args = args
         self.items = items
-        self.generateIndividual(self.items[random.choice(list(self.items.keys()))])
-        self.fitness()
+        if pattern == None:
+            self.generateRandomIndividual(self.items[random.choice(list(self.items.keys()))])
+        else:
+            self.individual = pattern
 
-    def generateIndividual(self, items):
+        self.calculateFitness()
 
-        self.individual = random.choices(
+    def generateRandomIndividual(self, items):
+
+        self.individual = set(random.choices(
             list(items.keys()),
             k = random.randint(self.args.min_length_itemset, self.args.max_length_itemset)
-            )
+            ))
 
     def calculateSupport(self, group):
         try:
@@ -112,21 +141,87 @@ class Individual:
         return len(initialSet)
 
 
-    def fitness(self):
+    def calculateFitness(self):
         self.fitness = dict()
 
         for firstGroup in self.items:
             for secondGroup in self.items:
                 if firstGroup != secondGroup:
-                    self.fitness[(firstGroup, secondGroup)] = division(self.calculateSupport(self.items[firstGroup]), self.calculateSupport(self.items[secondGroup]))
-
-
+                    self.fitness[(firstGroup, secondGroup)] = 1 / division(self.calculateSupport(self.items[firstGroup]), self.calculateSupport(self.items[secondGroup]))
 
     def mutation(self):
-        pass
+        auxIndividual = list(self.individual)
+        while self.args.mutation_rate >= random.random():
+            group = random.choice(list(self.items.keys()))
+            item = random.choice(list(self.items[group].keys()))
+            auxIndividual[random.randint(0, len(auxIndividual) - 1)] = item
+            if len(set(auxIndividual)) == len(auxIndividual):
+                self.individual = set(auxIndividual)
+                self.calculateFitness()
 
-    def calculateFitness(self):
-        pass
+
+    def __len__(self):
+        return len(self.individual)
+
+
+    def __gt__(self, other):
+        grCount  = []
+        grMean = []
+
+        for individual in (self.fitness, other.fitness):
+            auxCount = 0
+            auxMean = 0
+            for gr, support in individual:
+                if gr == 0 and self.args.support_threshold >= support:
+                    gr = 1
+                auxCount += 1 if gr == 0 else 0
+                auxMean += gr
+
+            auxMean = auxMean / len(self.fitness)
+
+            grCount.append(auxCount)
+            grMean.append(auxMean)
+
+        if grCount[0] > grCount[1]:
+            return True
+        else:
+            if grCount[0] == grCount[1]:
+                if grMean[0] < grMean[1]:
+                    return True
+                else:
+                    return False
+            else:
+                return False
+
+    def __lt__(self, other):
+        grCount  = []
+        grMean = []
+
+        for individual in (self.fitness, other.fitness):
+            auxCount = 0
+            auxMean = 0
+            for gr, support in individual:
+                if gr == 0 and self.args.support_threshold >= support:
+                    gr = 1
+                auxCount += 1 if gr == 0 else 0
+                auxMean += gr
+
+            auxMean = auxMean / len(self.fitness)
+
+            grCount.append(auxCount)
+            grMean.append(auxMean)
+
+        if grCount[0] < grCount[1]:
+            return True
+        else:
+            if grCount[0] == grCount[1]:
+                if grMean[0] > grMean[1]:
+                    return True
+                else:
+                    return False
+            else:
+                return False
+
 
     def __repr__(self):
         toPrint = "\n".join([
@@ -195,6 +290,11 @@ def main():
                         help = "Set mutation rate (float).",
                         type = float, action = "store",
                         default = 0.5)
+
+    parser.add_argument("-s", "--support_threshold",
+                        help = "Set minimum support threshold (integer).",
+                        type = int, action = "store",
+                        default = 50)
 
     arguments = parser.parse_args()
     run(arguments)
