@@ -4,6 +4,7 @@ import statistics as st
 
 from data import Data
 from individual import Individual
+from elite import Elite
 
 def division(a, b):
     try:
@@ -25,6 +26,7 @@ class Population(Data):
         Data.__init__(self, self.args.input_file)
 
         self.population = []
+        self.elite = Elite(self.args, self.items)
         for _ in range(self.args.population_size):
             self.population.append(
                 Individual(
@@ -32,6 +34,7 @@ class Population(Data):
                     self.args
                     )
                 )
+        self.runEvolutive()
 
     def crossover(self):
         auxPopulation = []
@@ -48,9 +51,9 @@ class Population(Data):
 
     def tournament(self):
         auxPopulation = [] # Para copiar sin apuntar al mismo sitio en memoria
-        for _ in range(0, self.args.population_size):
+        for _ in range(len(self.population)):
             best = random.choice(self.population)
-            for _ in range(self.args.tournament_size) - 1:
+            for _ in range(len(self.population) - 1):
                 ind = random.choice(self.population)
                 if ind > best:
                     best = ind
@@ -59,10 +62,23 @@ class Population(Data):
         self.population = auxPopulation
 
     def runGeneration(self):
-        for i in range(self.args.generation_number):
-            print("Estamos en la generacion {}").format(i)
-            self.tournament()
-            self.crossover()
-            for individual in self.population:
-                individual.mutation()
-        print(self.population[:5])
+        self.tournament()
+        self.crossover()
+        for individual in self.population:
+            individual.mutation()
+
+    def runEvolutive(self):
+        print(f"Running Emerging Pattern for {self.args.input_file}")
+        print("\n".join([f"\tOption: {option}... {self.args.__dict__[option]}" for option in self.args.__dict__]))
+
+        if self.args.generation_number == None:
+            print("Running non finite state")
+
+            generation = 1
+            while True:
+                print(f"Generation {generation}")
+                self.runGeneration()
+                if generation == 100:
+                    break
+                generation += 1
+

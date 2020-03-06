@@ -13,7 +13,6 @@ def division(a, b):
 
 def run(args):
     population = Population(args)
-    print(population.population)
 
 
 def main():
@@ -38,7 +37,7 @@ def main():
     parser.add_argument("-g", "--generation_number",
                         help = "Number of generations to run.",
                         type = int, action = "store",
-                        default = 50)
+                        default = None)
 
     parser.add_argument("-p", "--population_size",
                         help = "Set population size.",
@@ -74,6 +73,21 @@ def main():
                         help = "Set minimum support threshold (integer).",
                         type = int, action = "store",
                         default = 50)
+
+    parser.add_argument("-r", "--reset_population",
+                        help = "Set numbers of resets",
+                        type = int, action = "store",
+                        default = 3)
+
+    parser.add_argument("-it", "--improvement_threshold",
+                        help = "Set minimum improvement threshold to reset",
+                        type = float, action = "store",
+                        default = 0.01)
+
+    parser.add_argument("-gc", "--generation_chance",
+                        help = "Set max number of generation without an improvement of -t",
+                        type = int, action = "store",
+                        default = 20)
 
     arguments = parser.parse_args()
     run(arguments)
