@@ -2,7 +2,7 @@
 ## Evolutive emerging pattern algorithm for transactional databases.
 
 **evolutivo_terminal.py HELP**: python evolutivo_terminal.py --help
-
+illo
 ~~~
 usage: evolutivo_terminal.py [-h] [-i INPUT_FILE] [-o OUTPUT_FILE]
                              [-n NUMBER_ITEMSET] [-g GENERATION_NUMBER]
