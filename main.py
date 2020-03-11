@@ -89,6 +89,11 @@ def main():
                         type = int, action = "store",
                         default = 20)
 
+    parser.add_argument("-es", "--elite_size",
+                        help = "Set the size of the elite",
+                        type = int, action = "store",
+                        default = 10)
+
     arguments = parser.parse_args()
     run(arguments)
 
