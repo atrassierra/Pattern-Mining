@@ -26,7 +26,7 @@ class Population(Data):
         Data.__init__(self, self.args.input_file)
 
         self.population = []
-        #self.elite = Elite(self.args, self.items)
+        self.elite = Elite(self.args, self.items)
         for _ in range(self.args.population_size):
             self.population.append(
                 Individual(
@@ -66,7 +66,7 @@ class Population(Data):
         self.crossover()
         for individual in self.population:
             individual.mutation()
-        #elite.update()
+        self.elite.update(self.population) # esto es asi? es la elite de population pero quiero llamar al metodo update de la clase elite
 
     def runEvolutive(self):
         print(f"Running Emerging Pattern for {self.args.input_file}")
@@ -82,4 +82,3 @@ class Population(Data):
                 if generation == 100:
                     break
                 generation += 1
-

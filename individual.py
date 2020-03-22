@@ -124,6 +124,29 @@ class Individual:
             else:
                 return False
 
+    def equalFitness(self, other):
+        grCount  = []
+        grMean = []
+
+        for individual in (self.fitness, other.fitness):
+            auxCount = 0
+            auxMean = 0
+            for gr, support in individual:
+                if gr == 0 and self.args.support_threshold >= support:
+                    gr = 1
+                auxCount += 1 if gr == 0 else 0
+                auxMean += gr
+
+            auxMean = auxMean / len(self.fitness)
+
+            grCount.append(auxCount)
+            grMean.append(auxMean)
+
+        if grCount[0] == grCount[1] and grMean[0] == grMean[1]:
+            return True
+        else:
+            return False
+
 
     def __repr__(self):
         toPrint = "\n".join([
