@@ -2,7 +2,6 @@ import random
 import argparse
 import statistics as st
 
-from population import Population
 from individual import Individual
 
 def division(a, b):
