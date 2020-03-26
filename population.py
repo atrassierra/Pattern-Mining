@@ -45,7 +45,7 @@ class Population(Data):
                     self.args
                     )
                 )
-        self.elite = Elite(self.args, self.items, self.population)
+        self.elite = Elite(self.args, list(self.items.keys()), self.population)
         self.runEvolutive()
 
     def crossover(self):
