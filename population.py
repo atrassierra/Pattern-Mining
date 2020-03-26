@@ -85,7 +85,7 @@ class Population(Data):
         auxPopulation = [] # Para copiar sin apuntar al mismo sitio en memoria
         for _ in range(len(self.population)):
             best = random.choice(self.population)
-            for _ in range(len(self.population) - 1):
+            for _ in range(self.args.tournament_size - 1):
                 ind = random.choice(self.population)
                 if ind > best:
                     best = ind
