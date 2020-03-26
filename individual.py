@@ -48,7 +48,8 @@ class Individual:
         for firstGroup in self.items:
             for secondGroup in self.items:
                 if firstGroup != secondGroup:
-                    self.fitness[(firstGroup, secondGroup)] = division(1, division(self.calculateSupport(self.items[firstGroup]), self.calculateSupport(self.items[secondGroup])))
+                    self.fitness[(firstGroup, secondGroup)] = (division(1, division(self.calculateSupport(self.items[firstGroup]), self.calculateSupport(self.items[secondGroup]))),
+                    self.calculateSupport(self.items[firstGroup]))
 
     def mutation(self):
         auxIndividual = list(self.individual)
@@ -72,8 +73,8 @@ class Individual:
         for individual in (self.fitness, other.fitness):
             auxCount = 0
             auxMean = 0
-            for gr, support in individual:
-                if gr == 0 and self.args.support_threshold >= support:
+            for gr, support in individual.values():
+                if self.args.support_threshold >= support:
                     gr = 1
                 auxCount += 1 if gr == 0 else 0
                 auxMean += gr
@@ -101,8 +102,8 @@ class Individual:
         for individual in (self.fitness, other.fitness):
             auxCount = 0
             auxMean = 0
-            for gr, support in individual:
-                if gr == 0 and self.args.support_threshold >= support:
+            for gr, support in individual.values():
+                if self.args.support_threshold >= support:
                     gr = 1
                 auxCount += 1 if gr == 0 else 0
                 auxMean += gr
@@ -130,8 +131,8 @@ class Individual:
         for individual in (self.fitness, other.fitness):
             auxCount = 0
             auxMean = 0
-            for gr, support in individual:
-                if gr == 0 and self.args.support_threshold >= support:
+            for gr, support in individual.values():
+                if self.args.support_threshold >= support:
                     gr = 1
                 auxCount += 1 if gr == 0 else 0
                 auxMean += gr

@@ -35,30 +35,21 @@ class Elite():
                 if self.isGreater(individual, self.elite[group][-1], group) and individual not in self.elite[group]:
                     self.elite[group][-1] = individual
                     self.orderElitegroup(group)
-                elif self.isEqual(individual, self.elite[group][-1], group):
-                    if individual.calculateSupport(group) > self.elite[group][-1].calculateSupport(group) and individual not in self.elite[group]:
-                        self.elite[group][-1] = individual
-                        self.orderElitegroup(group)
 
-    def isGreater(self, ind1, ind2, group):
+    def isGreater(self, ind1, ind2, group): # FITNESS AHORA ES UNA TUPLA (1/GR, SUP1)
         ind1Fitness = []
         ind2Fitness = []
         for comparison in ind1.fitness.keys():
             if comparison[0] == group:
-                ind1Fitness.append(ind1.fitness[comparison])
-                ind2Fitness.append(ind2.fitness[comparison])
+                ind1Fitness.append(ind1.fitness[comparison][0])
+                supInd1 = ind1.fitness[comparison][1] # Se puede machacar ya que el sup siempre es el mismo
+                ind2Fitness.append(ind2.fitness[comparison][0])
+                supInd2 = ind2.fitness[comparison][1]
         if st.mean(ind1Fitness) < st.mean(ind2Fitness):
             return True
-
-    def isEqual(self, ind1, ind2, group):
-        ind1Fitness = []
-        ind2Fitness = []
-        for comparison in ind1.fitness.keys():
-            if comparison[0] == group:
-                ind1Fitness.append(ind1.fitness[comparison])
-                ind2Fitness.append(ind2.fitness[comparison])
-        if st.mean(ind1Fitness) == st.mean(ind2Fitness):
-            return True
+        elif st.mean(ind1Fitness) ==  st.mean(ind2Fitness):
+            if supInd1 > supInd2:
+                return True
 
     def orderElitegroup(self, group):
         for indIndex in range(self.elite[group] - 1):
@@ -66,11 +57,6 @@ class Elite():
                 auxIndividual = self.elite[group][indIndex]
                 self.elite[group][indIndex] = self.elite[group][indIndex + 1]
                 self.elite[group][indIndex + 1] = auxIndividual
-            elif self.isEqual(self.elite[group][indIndex + 1], self.elite[group][indIndex], group):
-                if self.elite[group][indIndex + 1].calculateSupport(group) > self.elite[group][indIndex].calculateSupport(group):
-                    auxIndividual = self.elite[group][indIndex]
-                    self.elite[group][indIndex] = self.elite[group][indIndex + 1]
-                    self.elite[group][indIndex + 1] = auxIndividual
 
     def eliteStatistics(self):
         pass
