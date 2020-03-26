@@ -2,7 +2,7 @@ import statistics as st
 from individual import Individual
 import argparse
 
-class Resgistry():
+class Registry():
     """
     This class is intended for retrieve summarize statistics from the elite at a given generation
 
@@ -33,7 +33,7 @@ class Resgistry():
             @self.updateRegistry => Create a new registry in self.registry dict with the stats of
             the current generation
     """
-    def __init__(self, elite, args):
+    def __init__(self, elite, args, items):
         '''
         Crea un diccionario con el numero de generacion, dentro de eso, las clases y de dentro las
         estadisticas
@@ -41,6 +41,7 @@ class Resgistry():
         self.elite = elite
         self.args = args
         self.registry = dict()
+        self.items = items
 
         for gen in range(self.args.generation_number):
             self.registry[int(gen)] = dict()
@@ -108,14 +109,15 @@ class Resgistry():
             supportList.append(support)
         self.registry[int(generation)][group]["stdevFitness"] = list(st.stdev(grList), st.stdev(supportList))
 
-    def updateRegistry(self, group, generation):
+    def updateRegistry(self, generation):
         '''
         Se llama a este metodo y actualiza todo el registro para la generacion actual
         Hay que pasarle el grupo en formato AMR, no comparacion (AMR, EUR)
         Generation es un entero entre 0 y Nº de generaciones - 1
         '''
-        self.maxFitness(group, generation)
-        self.minFitness(group, generation)
-        self.meanFitness(group, generation)
-        self.medianFitness(group, generation)
-        self.stdevFitness(group, generation)
+        for group in self.items:
+            self.maxFitness(group, generation)
+            self.minFitness(group, generation)
+            self.meanFitness(group, generation)
+            self.medianFitness(group, generation)
+            self.stdevFitness(group, generation)

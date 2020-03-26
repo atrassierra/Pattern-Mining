@@ -5,6 +5,7 @@ import statistics as st
 from data import Data
 from individual import Individual
 from elite import Elite
+from registry import Registry
 
 def division(a, b):
     try:
@@ -46,6 +47,7 @@ class Population(Data):
                     )
                 )
         self.elite = Elite(self.args, list(self.items.keys()), self.population)
+        self.registry = Registry(self.elite, self.args, list(self.items.keys()))
         self.runEvolutive()
 
     def crossover(self):
@@ -105,7 +107,8 @@ class Population(Data):
         self.crossover()
         for individual in self.population:
             individual.mutation()
-        self.elite.update(self.population) # *CORRECTO esto es asi? es la elite de population pero quiero llamar al metodo update de la clase elite
+        self.elite.update(self.population)
+        self.registry.updateRegistry(self.generation) # He tocado generation y la he puesto como self.generation para pasarla por aqui
 
     def runEvolutive(self):
 
@@ -123,10 +126,10 @@ class Population(Data):
         if self.args.generation_number == None:
             print("Running non finite state")
 
-            generation = 1
+            self.generation = 0 # Antes empezaba en 1 pero lo he puesto en 0
             while True:
-                print(f"Generation {generation}")
+                print(f"Generation {self.generation}")
                 self.runGeneration()
-                if generation == 100:
+                if self.generation == 100:
                     break
-                generation += 1
+                self.generation += 1
