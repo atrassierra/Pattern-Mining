@@ -32,11 +32,11 @@ class Elite():
     def update(self, generation): # generation is the population at that moment para cuando existe elite y actualizas
         for group in self.elite:
             for individual in generation:
-                if self.isGreater(individual, self.elite[group][-1], group):
+                if self.isGreater(individual, self.elite[group][-1], group) and individual not in self.elite[group]:
                     self.elite[group][-1] = individual
                     self.orderElitegroup(group)
                 elif self.isEqual(individual, self.elite[group][-1], group):
-                    if individual.calculateSupport(group) > self.elite[group][-1].calculateSupport(group):
+                    if individual.calculateSupport(group) > self.elite[group][-1].calculateSupport(group) and individual not in self.elite[group]:
                         self.elite[group][-1] = individual
                         self.orderElitegroup(group)
 
