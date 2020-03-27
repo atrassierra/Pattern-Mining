@@ -47,7 +47,7 @@ class Population(Data):
                     )
                 )
         self.elite = Elite(self.args, list(self.items.keys()), self.population)
-        self.registry = Registry(self.elite, self.args, list(self.items.keys()))
+        self.registry = Registry(self.elite)
         self.runEvolutive()
 
     def crossover(self):

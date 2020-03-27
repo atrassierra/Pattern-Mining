@@ -25,9 +25,10 @@ class Elite():
             try:
                 for individual in range(self.args.elite_size):
                     self.elite[group].append(population[individual])
-                self.orderElitegroup(group)
             except:
                 print("Elite must have less size than the population")
+            self.orderElitegroup(group)
+            self.update(population)
 
     def update(self, generation): # generation is the population at that moment para cuando existe elite y actualizas
         for group in self.elite:
@@ -52,7 +53,7 @@ class Elite():
                 return True
 
     def orderElitegroup(self, group):
-        for indIndex in range(self.elite[group] - 1):
+        for indIndex in range(len(self.elite[group]) - 1):
             if self.isGreater(self.elite[group][indIndex + 1], self.elite[group][indIndex], group):
                 auxIndividual = self.elite[group][indIndex]
                 self.elite[group][indIndex] = self.elite[group][indIndex + 1]
