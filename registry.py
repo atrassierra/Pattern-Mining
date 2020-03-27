@@ -43,10 +43,10 @@ class Registry():
         self.registry = dict()
         self.items = items
 
-        for gen in range(self.args.generation_number):
-            self.registry[int(gen)] = dict()
+        for generation in range(self.args.generation_number):
+            self.registry[generation] = dict()
             for group in self.elite:
-                self.registry[int(gen)][group] = dict()
+                self.registry[generation][group] = dict()
 
     def maxFitness(self, group, generation):
         '''
